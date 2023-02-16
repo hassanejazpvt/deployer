@@ -1,0 +1,20 @@
+{
+    "name": "contrive/deployer",
+    "description": "A micro app to deploy code to servers via ssh or ftps",
+    "type": "project",
+    "autoload": {
+        "files": [
+            "src/Helpers/helper.php"
+        ],
+        "psr-4": {
+            "Contrive\\Deployer\\": "src/"
+        }
+    },
+    "minimum-stability": "stable",
+    "require": {
+        "symfony/var-dumper": "^6.0",
+        "doctrine/dbal": "^3.6",
+        "nesbot/carbon": "^2.66",
+        "phpseclib/phpseclib": "^3.0"
+    }
+}
