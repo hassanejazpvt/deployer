@@ -14,10 +14,10 @@ class DB
     public function __construct()
     {
         $connectionParams = [
-            'dbname' => 'deployer',
-            'user' => 'root',
-            'password' => '123456',
-            'host' => 'localhost',
+            'host' => $_ENV['DB_HOST'],
+            'dbname' => $_ENV['DB_NAME'],
+            'user' => $_ENV['DB_USER'],
+            'password' => $_ENV['DB_PASS'],
             'driver' => 'pdo_mysql',
         ];
 

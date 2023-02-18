@@ -31,8 +31,8 @@ $(() => {
     $(document).on('click', '.add-command', e => {
         e.preventDefault()
         const $this = $(e.currentTarget)
-        let sshId = $this.data('ssh-id')
-        $('#commandModal').find('[name="ssh_id"]').val(sshId)
+        let serverId = $this.data('server-id')
+        $('#commandModal').find('[name="server_id"]').val(serverId)
         $('#commandModal').modal('show')
     })
 
@@ -49,14 +49,71 @@ $(() => {
         e.preventDefault()
         const $this = $(e.currentTarget)
         let id = $this.data('id')
-        popup(route('CommandController', 'execute', { id }), 'Command Output');
+        swal("Are you sure you want to perform this action?", {
+            buttons: {
+                cancel: true,
+                yes: {
+                    text: "Yes",
+                },
+            },
+        }).then((value) => {
+            if (value === 'yes') {
+                popup(route('CommandController', 'execute', { id }), 'Command Output');
+            }
+        })
     })
 
     $(document).on('click', '.execute-all-commands', e => {
         e.preventDefault()
         const $this = $(e.currentTarget)
-        let sshId = $this.data('ssh-id')
-        popup(route('CommandController', 'executeAll', { sshId }), 'Command Output');
+        let serverId = $this.data('server-id')
+        swal("Are you sure you want to perform this action?", {
+            buttons: {
+                cancel: true,
+                yes: {
+                    text: "Yes",
+                },
+            },
+        }).then((value) => {
+            if (value === 'yes') {
+                popup(route('CommandController', 'executeAll', { serverId }), 'Command Output');
+            }
+        })
+    })
+
+    $(document).on('change', '.command-checkbox', e => {
+        const $this = $(e.currentTarget)
+        let serverId = $this.data('server-id')
+        $(`.execute-selected-commands[data-server-id="${serverId}"]`).toggle($(`.command-checkbox[data-server-id="${serverId}"]:checked`).length > 0)
+    })
+
+    $(document).on('click', '.execute-selected-commands', e => {
+        e.preventDefault()
+        const $this = $(e.currentTarget)
+        let serverId = $this.data('server-id')
+        if ($(`.command-checkbox[data-server-id="${serverId}"]:checked`).length) {
+            swal("Are you sure you want to perform this action?", {
+                buttons: {
+                    cancel: true,
+                    yes: {
+                        text: "Yes",
+                    },
+                },
+            }).then((value) => {
+                if (value === 'yes') {
+                    let commandIds = []
+                    $(`.command-checkbox[data-server-id="${serverId}"]:checked`).each((index, item) => {
+                        commandIds.push($(item).data('id'))
+                    })
+                    popup(route('CommandController', 'execute', { id: commandIds }), 'Command Output');
+                }
+            })
+        } else {
+            swal({
+                icon: 'error',
+                text: 'Select at least 1 command to execute.'
+            })
+        }
     })
 
     $(document).ajaxStop(() => {

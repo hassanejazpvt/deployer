@@ -7,7 +7,9 @@
 $ composer install
 $ npm i
 $ npm run dev
+$ cp .env.example .env
 ```
+- Update .env file
 
 # Run
 ```

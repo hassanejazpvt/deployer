@@ -4,18 +4,18 @@ namespace Contrive\Deployer\Controllers;
 
 use Contrive\Deployer\Libs\Request;
 use Contrive\Deployer\Models\Command;
-use Contrive\Deployer\Models\Ssh;
+use Contrive\Deployer\Models\Server;
 use phpseclib3\Crypt\PublicKeyLoader;
 use phpseclib3\Net\SSH2;
 
 class CommandController extends Controller
 {
-    private $ssh;
+    private $server;
     private $command;
 
     public function __construct()
     {
-        $this->ssh = new Ssh();
+        $this->server = new Server();
         $this->command = new Command();
         $this->ValidateRequestMethods([
             'store' => 'POST',
@@ -57,11 +57,11 @@ class CommandController extends Controller
      */
     public function executeAll(Request $request) : void
     {
-        $ssh = $this->ssh->find($request->sshId);
-        $commands = $this->command->getBySshId($request->sshId);
+        $server = $this->server->find($request->serverId);
+        $commands = $this->command->getByServerId($request->serverId);
         foreach ($commands as $command) {
             echo "<h1>Executing: {$command['name']}</h1>";
-            $this->executeCommand($ssh, $command);
+            $this->executeCommand($server, $command);
         }
         exit();
     }
@@ -73,26 +73,30 @@ class CommandController extends Controller
      */
     public function execute(Request $request) : void
     {
-        $command = $this->command->find($request->id);
-        $ssh = $this->ssh->find($command['ssh_id']);
-        $this->executeCommand($ssh, $command);
+        $ids = explode(',', $request->id);
+        foreach ($ids as $id) {
+            $command = $this->command->find($id);
+            $server = $this->server->find($command['server_id']);
+            echo "<h1>Executing: {$command['name']}</h1>";
+            $this->executeCommand($server, $command);
+        }
         exit();
     }
 
     /**
-     * @param array $ssh
+     * @param array $server
      * @param array $command
      *
      * @return void
      */
-    private function executeCommand(array $ssh, array $command) : void
+    private function executeCommand(array $server, array $command) : void
     {
         $tmpname = tempnam('tmp', '');
-        file_put_contents($tmpname, $ssh['private_key']);
+        file_put_contents($tmpname, $server['private_key']);
         $key = PublicKeyLoader::load(file_get_contents($tmpname));
         unlink($tmpname);
-        $sshClient = new SSH2($ssh['hostname'], $ssh['port']);
-        if (! $sshClient->login($ssh['username'], $key)) {
+        $sshClient = new SSH2($server['hostname'], $server['port']);
+        if (! $sshClient->login($server['username'], $key)) {
             echo 'Connection failed!';
             die;
         }

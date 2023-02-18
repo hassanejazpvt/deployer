@@ -22,7 +22,7 @@
         <?php if (isset($command)) { ?>
             <input type="hidden" name="id" value="<?= __($command, 'id') ?>">
         <?php } ?>
-        <input type="hidden" name="ssh_id" value="<?= @__($command, 'ssh_id') ?>">
+        <input type="hidden" name="server_id" value="<?= @__($command, 'server_id') ?>">
         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
         <button type="submit" class="btn btn-success">Save</button>
     </div>

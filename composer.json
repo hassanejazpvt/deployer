@@ -4,10 +4,10 @@
     "type": "project",
     "autoload": {
         "files": [
-            "src/Helpers/helper.php"
+            "app/Helpers/helper.php"
         ],
         "psr-4": {
-            "Contrive\\Deployer\\": "src/"
+            "Contrive\\Deployer\\": "app/"
         }
     },
     "minimum-stability": "stable",
@@ -15,6 +15,7 @@
         "symfony/var-dumper": "^6.0",
         "doctrine/dbal": "^3.6",
         "nesbot/carbon": "^2.66",
-        "phpseclib/phpseclib": "^3.0"
+        "phpseclib/phpseclib": "^3.0",
+        "vlucas/phpdotenv": "^5.5"
     }
 }

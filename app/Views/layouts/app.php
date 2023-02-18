@@ -18,10 +18,10 @@
         </symbol>
     </svg>
 
-    <div class="container py-3">
+    <div class="container-fluid py-3 px-5">
         <?php include 'header.php'; ?>
         <main>
-            <?php include 'src/Views/servers/servers.php'; ?>
+            <?php include VIEWS_PATH . '/servers/servers.php'; ?>
         </main>
         <div id="loader-wrapper">
             <div class="loader-inner">

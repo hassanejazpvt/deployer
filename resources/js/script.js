@@ -3,6 +3,9 @@ $(document).ajaxStart(() => {
 })
 $(document).ajaxStop(() => {
     $('#loader-wrapper').hide()
+    setTimeout(() => {
+        $('[data-bs-toggle="tooltip"]').tooltip()
+    }, 1)
 })
 
 window.initFormValidator = (selector) => {
