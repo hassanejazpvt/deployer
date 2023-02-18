@@ -5,10 +5,12 @@ namespace Contrive\Deployer\Libs;
 class Request
 {
     private $request;
+    private $files;
 
     public function __construct()
     {
         $this->request = $_REQUEST;
+        $this->files = $_FILES;
     }
 
     /**
@@ -33,15 +35,30 @@ class Request
     }
 
     /**
+     * @return array|null
+     */
+    public function files() : ?array
+    {
+        return $this->files;
+    }
+
+    /**
+     * @param string $name
+     * @return array|null
+     */
+    public function file(string $name) : ?array
+    {
+        return $this->files[$name] ?? null;
+    }
+
+    /**
      * @param array $allowed
      *
      * @return array|null
      */
     public function only(array $allowed) : ?array
     {
-        return array_filter($this->request, function ($key) use ($allowed) {
-            return in_array($key, $allowed);
-        }, ARRAY_FILTER_USE_KEY);
+        return only($this->request, $allowed);
     }
 
     /**
@@ -51,9 +68,7 @@ class Request
      */
     public function except(array $ignored) : ?array
     {
-        return array_filter($this->request, function ($key) use ($ignored) {
-            return ! in_array($key, $ignored);
-        }, ARRAY_FILTER_USE_KEY);
+        return except($this->request, $ignored);
     }
 
     /**

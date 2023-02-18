@@ -35,7 +35,10 @@ class CommandController extends Controller
     {
         $this->command->insert($request->only($this->command->getColumns()));
 
-        $this->JsonResponse(['status' => 1]);
+        $this->JsonResponse([
+            'status' => 1,
+            'message' => 'Command created successfully.'
+        ]);
     }
 
     /**
@@ -118,8 +121,11 @@ class CommandController extends Controller
     public function update(Request $request) : void
     {
         $this->command->update($request->only($this->command->getColumns()), $request->id);
-
-        $this->JsonResponse(['status' => 1]);
+        
+        $this->JsonResponse([
+            'status' => 1,
+            'message' => 'Command updated successfully.'
+        ]);
     }
 
     /**
@@ -130,6 +136,9 @@ class CommandController extends Controller
     public function delete(Request $request) : void
     {
         $this->command->delete($request->id);
-        $this->JsonResponse(['status' => 1]);
+        $this->JsonResponse([
+            'status' => 1,
+            'message' => 'Command deleted successfully.'
+        ]);
     }
 }

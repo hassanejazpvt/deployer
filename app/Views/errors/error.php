@@ -248,7 +248,7 @@
 </style>
 <div class="container">
     <div class="error">
-        <h1>500</h1>
+        <h1><?= $e->getCode() ?></h1>
         <h2>error</h2>
         <p></p>
     </div>

@@ -82,17 +82,19 @@ class Model extends DB
 
     /**
      * @param array $data
-     * @return boolean
+     *
+     * @return integer
      */
-    public function insert(array $data) : bool
+    public function insert(array $data) : int
     {
         if ($this->timestamps === true) {
-            $data += [
+            $data = array_merge($data, [
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now()
-            ];
+            ]);
         }
-        return $this->getConn()->insert($this->table, $data);
+        $this->getConn()->insert($this->table, $data);
+        return $this->getConn()->lastInsertId();
     }
 
     /**

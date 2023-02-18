@@ -2,6 +2,8 @@
 
 namespace Contrive\Deployer\Controllers;
 
+use Exception;
+
 class Controller
 {
     public function __construct()
@@ -31,9 +33,9 @@ class Controller
     {
         if ($_SERVER['REQUEST_METHOD'] != strtoupper($method)) {
             if ($_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest') {
-                $this->JsonResponse('Method Not Allowed', 405);
+                $this->JsonResponse('Method "'.$_SERVER['REQUEST_METHOD'].'" Not Allowed', 405);
             }
-            http_response_code(405);
+            throw new Exception('Method "'.$_SERVER['REQUEST_METHOD'].'" Not Allowed', 405);
             exit();
         }
     }

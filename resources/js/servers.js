@@ -1,4 +1,48 @@
 $(() => {
+    $(document).on('change', '#import-collection', e => {
+        const $this = $(e.currentTarget)
+        if ($this[0].files.length) {
+            swal("Are you sure you want to perform this action?", {
+                buttons: {
+                    cancel: true,
+                    yes: {
+                        text: "Yes",
+                    },
+                },
+            }).then((value) => {
+                if (value === 'yes') {
+                    let fd = new FormData()
+                    fd.append('file', $this[0].files[0])
+                    $.ajax({
+                        url: route('ServerController', 'import'),
+                        type: 'POST',
+                        cache: false,
+                        processData: false,
+                        contentType: false,
+                        data: fd,
+                        dataType: 'json',
+                        success: data => {
+                            swal({
+                                icon: 'success',
+                                text: data.message,
+                                timer: 3000
+                            })
+                            dt.ajax.reload()
+                        },
+                        error: error => {
+                            swal({
+                                icon: 'error',
+                                message: 'Something went wrong.',
+                                timer: 3000
+                            })
+                        }
+                    })
+                }
+                $this.val('')
+            })
+        }
+    })
+
     $(document).on('xhr.dt', '#dynamic-table', () => {
         setTimeout(() => {
             if (String(lastOpenedRows)) {
@@ -140,12 +184,18 @@ $(() => {
                     .done(data => {
                         if (data.status) {
                             dt.ajax.reload()
+                            swal({
+                                icon: 'success',
+                                text: data.message,
+                                timer: 3000
+                            })
                         }
                     })
                     .fail(error => {
                         swal({
                             icon: 'error',
-                            text: error.statusText
+                            text: error.statusText,
+                            timer: 3000
                         })
                     })
             }
@@ -170,19 +220,22 @@ $(() => {
                 if (data.status) {
                     swal({
                         icon: 'success',
-                        text: data.message
+                        text: data.message,
+                        timer: 3000
                     })
                 } else {
                     swal({
                         icon: 'error',
-                        text: data.message
+                        text: data.message,
+                        timer: 3000
                     })
                 }
             })
             .fail(error => {
                 swal({
                     icon: 'error',
-                    text: error.statusText
+                    text: error.statusText,
+                    timer: 3000
                 })
             })
     })
@@ -204,15 +257,22 @@ $(() => {
                 if (data.status) {
                     $this.closest('.modal').on('hidden.bs.modal', () => {
                         $this[0].reset()
-                    }).off('hidden.bs.modal')
+                        $this.closest('.modal').off('hidden.bs.modal')
+                    })
                     $this.closest('.modal').modal('hide')
                     dt.ajax.reload()
+                    swal({
+                        icon: 'success',
+                        text: data.message,
+                        timer: 3000
+                    })
                 }
             })
             .fail(error => {
                 swal({
                     icon: 'error',
-                    text: error.statusText
+                    text: error.statusText,
+                    timer: 3000
                 })
             })
     })

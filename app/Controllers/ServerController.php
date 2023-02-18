@@ -24,7 +24,9 @@ class ServerController extends Controller
             'update' => 'POST',
             'store' => 'POST',
             'delete' => 'POST',
-            'verify' => 'POST'
+            'verify' => 'POST',
+            'export' => 'GET',
+            'import' => 'POST'
         ]);
     }
 
@@ -33,14 +35,14 @@ class ServerController extends Controller
      */
     public function index() : void
     {
-        $server = array_map(function ($record) {
+        $servers = array_map(function ($record) {
             $record['identities_only'] = $record['identities_only'] ? 'Yes' : 'No';
             $record['created_at'] = Carbon::parse($record['created_at'])->format('M d, Y - h:i A');
             $record['updated_at'] = Carbon::parse($record['updated_at'])->format('M d, Y - h:i A');
             $record['commands'] = $this->command->getByServerId($record['id']);
             return $record;
         }, $this->server->all());
-        $this->JsonResponse(['data' => $server]);
+        $this->JsonResponse(['data' => $servers]);
     }
 
     /**
@@ -64,7 +66,10 @@ class ServerController extends Controller
     {
         $this->server->update($request->only($this->server->getColumns()), $request->id);
 
-        $this->JsonResponse(['status' => 1]);
+        $this->JsonResponse([
+            'status' => 1,
+            'message' => 'Server updated successfully.'
+        ]);
     }
 
     /**
@@ -76,7 +81,63 @@ class ServerController extends Controller
     {
         $this->server->insert($request->only($this->server->getColumns()));
 
-        $this->JsonResponse(['status' => 1]);
+        $this->JsonResponse([
+            'status' => 1,
+            'message' => 'Server created successfully.'
+        ]);
+    }
+
+    /**
+     * @return void
+     */
+    public function export() : void
+    {
+        $servers = array_map(function ($server) {
+            $server['commands'] = array_map(function ($command) {
+                return array_filter($command, function ($key) {
+                    return ! in_array($key, [$this->command->getPk(), 'server_id']);
+                }, ARRAY_FILTER_USE_KEY);
+            }, $this->command->getByServerId($server['id']));
+
+            return array_filter($server, function ($key) {
+                return $key != $this->server->getPk();
+            }, ARRAY_FILTER_USE_KEY);
+            return $server;
+        }, $this->server->all());
+        $servers['deployerExported'] = sha1('deployer');
+
+        header('Content-disposition: attachment; filename=deployer-export.json');
+        header('Content-type: application/json');
+        echo json_encode($servers);
+        exit();
+    }
+
+    public function import(Request $request) : void
+    {
+        $file = $request->file('file');
+        $data = json_decode(file_get_contents($file['tmp_name']), true);
+        if (isset($data['deployerExported']) && $data['deployerExported'] == sha1('deployer')) {
+            if ($data && is_array($data)) {
+                foreach ($data as $server) {
+                    if (is_array($server)) {
+                        $serverId = $this->server->insert(only($server, $this->server->getColumns()));
+                        if (! empty($server['commands'])) {
+                            $commands = array_map(function ($command) use ($serverId) {
+                                $command['server_id'] = $serverId;
+                                return $command;
+                            }, $server['commands']);
+                            foreach ($commands as $command) {
+                                $this->command->insert(only($command, $this->command->getColumns()));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        $this->JsonResponse([
+            'status' => 1,
+            'message' => 'Collection imported successfully.'
+        ]);
     }
 
     /**
@@ -87,7 +148,10 @@ class ServerController extends Controller
     public function delete(Request $request) : void
     {
         $this->server->delete($request->id);
-        $this->JsonResponse(['status' => 1]);
+        $this->JsonResponse([
+            'status' => 1,
+            'message' => 'Server deleted successfully.'
+        ]);
     }
 
     /**

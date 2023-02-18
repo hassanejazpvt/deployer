@@ -16,12 +16,18 @@ $(() => {
                     .done(data => {
                         if (data.status) {
                             dt.ajax.reload()
+                            swal({
+                                icon: 'success',
+                                text: data.message,
+                                timer: 3000
+                            })
                         }
                     })
                     .fail(error => {
                         swal({
                             icon: 'error',
-                            text: error.statusText
+                            text: error.statusText,
+                            timer: 3000
                         })
                     })
             }
@@ -111,7 +117,8 @@ $(() => {
         } else {
             swal({
                 icon: 'error',
-                text: 'Select at least 1 command to execute.'
+                text: 'Select at least 1 command to execute.',
+                timer: 3000
             })
         }
     })
@@ -136,12 +143,18 @@ $(() => {
                     }).off('hidden.bs.modal')
                     $this.closest('.modal').modal('hide')
                     dt.ajax.reload()
+                    swal({
+                        icon: 'success',
+                        text: data.message,
+                        timer: 3000
+                    })
                 }
             })
             .fail(error => {
                 swal({
                     icon: 'error',
-                    text: error.statusText
+                    text: error.statusText,
+                    timer: 3000
                 })
             })
     })
