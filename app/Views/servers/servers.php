@@ -5,8 +5,8 @@
     <span class="float-start">
         <a href="<?= route('ServerController', 'export') ?>" class="btn btn-outline-primary"><i class="fa fa-archive"></i> Export Collection</a>
         <label class="btn btn-outline-success">
-            <i class="fa fa-archive"></i> Import Collection
-            <input type="file" style="opacity: 0; position: absolute;" accept=".json" id="import-collection">
+            <i class="fa fa-sitemap"></i> Import Collection
+            <input type="file" accept=".json" id="import-collection">
         </label>
     </span>
     <a href="javascript:;" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#serverModal"><i class="fa fa-plus"></i> Add New Server</a>

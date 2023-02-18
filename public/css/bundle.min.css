@@ -13869,6 +13869,14 @@ textarea.form-control-lg {
     transform: rotate(360deg);
   }
 }
+#import-collection {
+  opacity: 0;
+  position: fixed;
+  top: -100px;
+  left: -100px;
+  visibility: hidden;
+}
+
 .output-block {
   max-height: 700px;
   overflow: auto;
