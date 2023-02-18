@@ -13816,6 +13816,11 @@ textarea.form-control-lg {
   clip: auto;
 }
 
+.actions-table th:last-child,
+.actions-table td:last-child {
+  text-align: right;
+}
+
 #loader-wrapper {
   position: fixed;
   top: 0;
@@ -13863,4 +13868,8 @@ textarea.form-control-lg {
   100% {
     transform: rotate(360deg);
   }
+}
+.output-block {
+  max-height: 700px;
+  overflow: auto;
 }

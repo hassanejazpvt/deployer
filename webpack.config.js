@@ -10,6 +10,11 @@ module.exports = {
         path: path.resolve(__dirname, 'public'),
         filename: 'js/bundle.min.js',
     },
+    resolve: {
+        alias: {
+            jquery: "jquery/src/jquery"
+        }
+    },
     module: {
         rules: [
             {
@@ -29,3 +34,4 @@ module.exports = {
         ],
     },
 };
+

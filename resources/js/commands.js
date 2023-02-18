@@ -1,5 +1,5 @@
 $(() => {
-    $(document).on('click', '.delete-server', e => {
+    $(document).on('click', '.delete-command', e => {
         e.preventDefault()
         const $this = $(e.currentTarget)
         let id = $this.data('id')
@@ -12,7 +12,7 @@ $(() => {
             },
         }).then((value) => {
             if (value === 'yes') {
-                $.post(route('ServerController', 'delete', { id }))
+                $.post(route('CommandController', 'delete', { id }))
                     .done(data => {
                         if (data.status) {
                             dt.ajax.reload()
@@ -25,53 +25,49 @@ $(() => {
                         })
                     })
             }
-        });
-    });
-
-    $(document).on('click', '.edit-server', e => {
-        e.preventDefault()
-        const $this = $(e.currentTarget)
-        let id = $this.data('id')
-        $('#editServerModal .modal-content').load(route('ServerController', 'edit', { id }), () => {
-            $('#editServerModal').modal('show')
         })
     })
 
-    $(document).on('click', '.verify-server', e => {
+    $(document).on('click', '.add-command', e => {
+        e.preventDefault()
+        const $this = $(e.currentTarget)
+        let sshId = $this.data('ssh-id')
+        $('#commandModal').find('[name="ssh_id"]').val(sshId)
+        $('#commandModal').modal('show')
+    })
+
+    $(document).on('click', '.edit-command', e => {
         e.preventDefault()
         const $this = $(e.currentTarget)
         let id = $this.data('id')
-        $.post(route('ServerController', 'verify', { id }))
-            .done(data => {
-                if (data.status) {
-                    swal({
-                        icon: 'success',
-                        text: data.message
-                    })
-                } else {
-                    swal({
-                        icon: 'error',
-                        text: data.message
-                    })
-                }
-            })
-            .fail(error => {
-                swal({
-                    icon: 'error',
-                    text: error.statusText
-                })
-            })
+        $('#editCommandModal .modal-content').load(route('CommandController', 'edit', { id }), () => {
+            $('#editCommandModal').modal('show')
+        })
     })
 
-    initFormValidator('.serverForm')
+    $(document).on('click', '.execute-command', e => {
+        e.preventDefault()
+        const $this = $(e.currentTarget)
+        let id = $this.data('id')
+        popup(route('CommandController', 'execute', { id }), 'Command Output');
+    })
+
+    $(document).on('click', '.execute-all-commands', e => {
+        e.preventDefault()
+        const $this = $(e.currentTarget)
+        let sshId = $this.data('ssh-id')
+        popup(route('CommandController', 'executeAll', { sshId }), 'Command Output');
+    })
 
     $(document).ajaxStop(() => {
         setTimeout(() => {
-            initFormValidator('.serverForm')
+            initFormValidator('.commandForm')
         }, 500)
     })
 
-    $(document).on('submit', '.serverForm', e => {
+    initFormValidator('.commandForm')
+
+    $(document).on('submit', '.commandForm', e => {
         e.preventDefault()
 
         const $this = $(e.currentTarget)

@@ -23,16 +23,68 @@ class Model extends DB
     /**
      * @return array|null
      */
-    public function all(): ?array
+    public function all() : ?array
     {
-        return $this->getQueryBuilder()->select('*')->from($this->table)->fetchAllAssociative();
+        $results = $this->getQueryBuilder()->select('*')->from($this->table)->fetchAllAssociative();
+        $this->resetQueryBuilder();
+        return $results;
+    }
+
+    /**
+     * @return void
+     */
+    private function resetQueryBuilder() : void
+    {
+        $this->getQueryBuilder()->resetQueryParts();
+    }
+
+    /**
+     * @param array $where
+     *
+     * @return self
+     */
+    public function where(array $where) : self
+    {
+        foreach ($where as $k => $v) {
+            if (is_string($v)) {
+                $this->getQueryBuilder()->andWhere("`{$k}` = \"{$v}\"");
+            } else {
+                $this->getQueryBuilder()->andWhere("`{$k}` = {$v}");
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * @param array $where
+     *
+     * @return self
+     */
+    public function orWhere(array $where) : self
+    {
+        foreach ($where as $k => $v) {
+            if (is_string($v)) {
+                $this->getQueryBuilder()->orWhere("`{$k}` = \"{$v}\"");
+            } else {
+                $this->getQueryBuilder()->orWhere("`{$k}` = {$v}");
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * @return array|null
+     */
+    public function get() : ?array
+    {
+        return $this->all();
     }
 
     /**
      * @param array $data
      * @return boolean
      */
-    public function insert(array $data): bool
+    public function insert(array $data) : bool
     {
         if ($this->timestamps === true) {
             $data += [
@@ -46,10 +98,10 @@ class Model extends DB
     /**
      * @param array $data
      * @param integer $id
-     * 
+     *
      * @return boolean
      */
-    public function update(array $data, int $id): bool
+    public function update(array $data, int $id) : bool
     {
         if ($this->timestamps === true) {
             $data += [
@@ -64,9 +116,11 @@ class Model extends DB
      *
      * @return array|null
      */
-    public function find(int $id): ?array
+    public function find(int $id) : ?array
     {
-        return $this->getQueryBuilder()->select('*')->where($this->getPk() . ' = ' . $id)->from($this->table)->fetchAssociative();
+        $result = $this->getQueryBuilder()->select('*')->where($this->getPk().' = '.$id)->from($this->table)->fetchAssociative();
+        $this->resetQueryBuilder();
+        return $result;
     }
 
     /**
@@ -74,7 +128,7 @@ class Model extends DB
      *
      * @return boolean
      */
-    public function delete(int $id): bool
+    public function delete(int $id) : bool
     {
         return $this->getConn()->delete($this->table, [$this->getPk() => $id]);
     }
@@ -82,7 +136,7 @@ class Model extends DB
     /**
      * @return array
      */
-    public function getColumns(): array
+    public function getColumns() : array
     {
         return $this->columns;
     }
@@ -90,7 +144,7 @@ class Model extends DB
     /**
      * @return string
      */
-    public function getPk(): string
+    public function getPk() : string
     {
         return $this->pk;
     }

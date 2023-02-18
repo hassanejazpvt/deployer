@@ -1,4 +1,4 @@
-<form method="post" action="<?= route('ServerController', (isset($ssh) ? 'update' : 'store')) ?>" id="serverForm">
+<form method="post" action="<?= route('ServerController', (isset($ssh) ? 'update' : 'store')) ?>" class="serverForm">
     <!-- Modal Header -->
     <div class="modal-header">
         <h4 class="modal-title"><?= isset($ssh) ? 'Edit' : 'Add New' ?> Server</h4>

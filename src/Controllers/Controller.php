@@ -14,7 +14,7 @@ class Controller
      *
      * @return string|null
      */
-    public function JsonResponse($data, int $code = 200): ?string
+    public function JsonResponse($data, int $code = 200) : ?string
     {
         http_response_code($code);
         header('Content-Type: application/json');
@@ -24,16 +24,29 @@ class Controller
 
     /**
      * @param string $method
-     * 
+     *
      * @return void
      */
-    public function ValidateRequestMethod(string $method): void
+    public function ValidateRequestMethod(string $method) : void
     {
         if ($_SERVER['REQUEST_METHOD'] != strtoupper($method)) {
-            if ($_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest')
+            if ($_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest') {
                 $this->JsonResponse('Method Not Allowed', 405);
+            }
             http_response_code(405);
             exit();
+        }
+    }
+
+    /**
+     * @param array $methods
+     *
+     * @return void
+     */
+    public function ValidateRequestMethods(array $methods) : void
+    {
+        if (isset($methods[$_GET['_m']])) {
+            $this->ValidateRequestMethod($methods[$_GET['_m']]);
         }
     }
 }
