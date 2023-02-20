@@ -140,7 +140,8 @@ $(() => {
                 if (data.status) {
                     $this.closest('.modal').on('hidden.bs.modal', () => {
                         $this[0].reset()
-                    }).off('hidden.bs.modal')
+                        $this.closest('.modal').off('hidden.bs.modal')
+                    })
                     $this.closest('.modal').modal('hide')
                     dt.ajax.reload()
                     swal({

@@ -33,7 +33,9 @@ class CommandController extends Controller
      */
     public function store(Request $request) : void
     {
-        $this->command->insert($request->only($this->command->getColumns()));
+        $data = $request->all();
+        $data['sorting'] = $this->command->where(['server_id' => $request->server_id])->max('sorting') + 1;
+        $this->command->insert($data);
 
         $this->JsonResponse([
             'status' => 1,
@@ -111,6 +113,7 @@ class CommandController extends Controller
             ob_flush();
         });
         echo '</pre>';
+        echo '<hr>';
     }
 
     /**
@@ -120,8 +123,8 @@ class CommandController extends Controller
      */
     public function update(Request $request) : void
     {
-        $this->command->update($request->only($this->command->getColumns()), $request->id);
-        
+        $this->command->update($request->all(), $request->id);
+
         $this->JsonResponse([
             'status' => 1,
             'message' => 'Command updated successfully.'
@@ -139,6 +142,22 @@ class CommandController extends Controller
         $this->JsonResponse([
             'status' => 1,
             'message' => 'Command deleted successfully.'
+        ]);
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return void
+     */
+    public function sort(Request $request) : void
+    {
+        foreach ($request->sort as $index => $id) {
+            $this->command->update(['sorting' => ($index + 1)], $id);
+        }
+        $this->JsonResponse([
+            'status' => 1,
+            'message' => 'Sorted successfully.'
         ]);
     }
 }

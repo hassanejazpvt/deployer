@@ -16,9 +16,9 @@ class Request
     /**
      * @param string $key
      *
-     * @return string|null
+     * @return mixed
      */
-    public function get(string $key) : ?string
+    public function get(string $key) : mixed
     {
         return $this->request[$key] ?? null;
     }
@@ -82,9 +82,9 @@ class Request
     /**
      * @param string $key
      *
-     * @return string|null
+     * @return mixed
      */
-    public function __get(string $key) : ?string
+    public function __get(string $key) : mixed
     {
         return $this->get($key);
     }

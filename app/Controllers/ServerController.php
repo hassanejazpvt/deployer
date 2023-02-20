@@ -64,7 +64,7 @@ class ServerController extends Controller
      */
     public function update(Request $request) : void
     {
-        $this->server->update($request->only($this->server->getColumns()), $request->id);
+        $this->server->update($request->all(), $request->id);
 
         $this->JsonResponse([
             'status' => 1,
@@ -79,7 +79,7 @@ class ServerController extends Controller
      */
     public function store(Request $request) : void
     {
-        $this->server->insert($request->only($this->server->getColumns()));
+        $this->server->insert($request->all());
 
         $this->JsonResponse([
             'status' => 1,

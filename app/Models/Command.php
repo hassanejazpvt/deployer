@@ -8,7 +8,7 @@ class Command extends Model
 
     public bool $timestamps = true;
 
-    protected array $columns = ['server_id', 'name', 'command'];
+    protected array $columns = ['server_id', 'name', 'command', 'sorting'];
 
     /**
      * @param integer $serverId
@@ -17,6 +17,6 @@ class Command extends Model
      */
     public function getByServerId(int $serverId): ?array
     {
-        return $this->where(['server_id' => $serverId])->get();
+        return $this->where(['server_id' => $serverId])->orderBy('sorting', 'ASC')->get();
     }
 }

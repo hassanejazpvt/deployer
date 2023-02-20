@@ -43,6 +43,32 @@ $(() => {
         }
     })
 
+    // $(document).on('init.dt', '#dynamic-table', () => {
+    //     setTimeout(() => {
+    //         $('tbody.sortable').each((index, item) => {
+    //             $(item).sortable({
+    //                 update: (event, ui) => {
+    //                     let serverId = $(ui.item[0]).find('.sort-command').data('server-id')
+    //                     let sort = []
+    //                     $(`.sort-command[data-server-id="${serverId}"]`).each((index, item) => {
+    //                         sort.push($(item).val())
+    //                     })
+    //                     $.post(route('CommandController', 'sort'), { sort })
+    //                         .done(data => {
+
+    //                         })
+    //                         .fail(error => {
+    //                             swal({
+    //                                 icon: 'error',
+    //                                 message: 'Something went wrong.',
+    //                                 timer: 3000
+    //                             })
+    //                         })
+    //                 }
+    //             })
+    //         })
+    //     }, 1)
+    // })
     $(document).on('xhr.dt', '#dynamic-table', () => {
         setTimeout(() => {
             if (String(lastOpenedRows)) {
@@ -52,6 +78,28 @@ $(() => {
                     $(`.verify-server[data-id="${openedRowId}"]`).closest('tr').find('.dt-control').click()
                 })
             }
+            $('tbody.sortable').each((index, item) => {
+                $(item).sortable({
+                    update: (event, ui) => {
+                        let serverId = $(ui.item[0]).find('.sort-command').data('server-id')
+                        let sort = []
+                        $(`.sort-command[data-server-id="${serverId}"]`).each((index, item) => {
+                            sort.push($(item).val())
+                        })
+                        $.post(route('CommandController', 'sort'), { sort })
+                            .done(data => {
+
+                            })
+                            .fail(error => {
+                                swal({
+                                    icon: 'error',
+                                    message: 'Something went wrong.',
+                                    timer: 3000
+                                })
+                            })
+                    }
+                })
+            })
         }, 1)
     })
 
@@ -117,6 +165,7 @@ $(() => {
                         <td>
                             <div class="form-check">
                                 <input type="checkbox" class="form-check-input command-checkbox" data-server-id="${d.id}" data-id="${command.id}">
+                                <input type="hidden" class="sort-command" data-server-id="${d.id}" value="${command.id}" />
                             </div>
                         </td>
                         <td>${command.name}</td>
@@ -148,7 +197,7 @@ $(() => {
                             <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody>${commands}</tbody>
+                    <tbody class="sortable">${commands}</tbody>
                 </table>`
             );
         }

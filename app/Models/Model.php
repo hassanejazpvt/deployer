@@ -73,6 +73,18 @@ class Model extends DB
     }
 
     /**
+     * @param string $sort
+     * @param string|null $order
+     *
+     * @return self
+     */
+    public function orderBy(string $sort, ?string $order = null) : self
+    {
+        $this->getQueryBuilder()->orderBy($sort, $order);
+        return $this;
+    }
+
+    /**
      * @return array|null
      */
     public function get() : ?array
@@ -92,9 +104,20 @@ class Model extends DB
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now()
             ]);
+            $this->columns = array_merge($this->columns, ['created_at', 'updated_at']);
         }
-        $this->getConn()->insert($this->table, $data);
+        $this->getConn()->insert($this->table, only($data, $this->getColumns()));
         return $this->getConn()->lastInsertId();
+    }
+
+    /**
+     * @param string $column
+     *
+     * @return integer
+     */
+    public function max(string $column) : int
+    {
+        return $this->getQueryBuilder()->from($this->table)->select("MAX({$column}) as max")->fetchAssociative()['max'] ?? 0;
     }
 
     /**
@@ -109,8 +132,9 @@ class Model extends DB
             $data += [
                 'updated_at' => Carbon::now()
             ];
+            $this->columns = array_merge($this->columns, ['updated_at']);
         }
-        return $this->getConn()->update($this->table, $data, [$this->getPk() => $id]);
+        return $this->getConn()->update($this->table, only($data, $this->getColumns()), [$this->getPk() => $id]);
     }
 
     /**
