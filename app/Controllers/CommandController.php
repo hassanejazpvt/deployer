@@ -3,10 +3,9 @@
 namespace Contrive\Deployer\Controllers;
 
 use Contrive\Deployer\Libs\Request;
+use Contrive\Deployer\Libs\SSHClient;
 use Contrive\Deployer\Models\Command;
 use Contrive\Deployer\Models\Server;
-use phpseclib3\Crypt\PublicKeyLoader;
-use phpseclib3\Net\SSH2;
 
 class CommandController extends Controller
 {
@@ -96,12 +95,8 @@ class CommandController extends Controller
      */
     private function executeCommand(array $server, array $command) : void
     {
-        $tmpname = tempnam('tmp', '');
-        file_put_contents($tmpname, $server['private_key']);
-        $key = PublicKeyLoader::load(file_get_contents($tmpname));
-        unlink($tmpname);
-        $sshClient = new SSH2($server['hostname'], $server['port']);
-        if (! $sshClient->login($server['username'], $key)) {
+        $sshClient = SSHClient::connect($server);
+        if ($sshClient->getErrors()) {
             echo 'Connection failed!';
             die;
         }

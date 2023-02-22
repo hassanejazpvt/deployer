@@ -8,5 +8,5 @@ class Server extends Model
 
     public bool $timestamps = true;
 
-    protected array $columns = ['name', 'hostname', 'username', 'port', 'public_key', 'private_key', 'identities_only'];
+    protected array $columns = ['name', 'hostname', 'username', 'port', 'public_key', 'private_key', 'password', 'identities_only', 'use_password'];
 }

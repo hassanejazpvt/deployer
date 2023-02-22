@@ -1,6 +1,7 @@
 <?php
 
 use Contrive\Deployer\Libs\Request;
+use phpseclib3\Net\SSH2;
 
 require 'vendor/autoload.php';
 

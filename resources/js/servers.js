@@ -43,32 +43,12 @@ $(() => {
         }
     })
 
-    // $(document).on('init.dt', '#dynamic-table', () => {
-    //     setTimeout(() => {
-    //         $('tbody.sortable').each((index, item) => {
-    //             $(item).sortable({
-    //                 update: (event, ui) => {
-    //                     let serverId = $(ui.item[0]).find('.sort-command').data('server-id')
-    //                     let sort = []
-    //                     $(`.sort-command[data-server-id="${serverId}"]`).each((index, item) => {
-    //                         sort.push($(item).val())
-    //                     })
-    //                     $.post(route('CommandController', 'sort'), { sort })
-    //                         .done(data => {
+    $(document).on('change', '[name="use_password"]', e => {
+        const $this = $(e.currentTarget)
+        $this.closest('form').find('.password-wrapper').toggle($this.is(':checked')).find('[name="password"]').attr('required', $this.is(':checked'))
+        $this.closest('form').find('.keys-wrapper').toggle(!$this.is(':checked')).find('[name="public_key"], [name="private_key"]').attr('required', !$this.is(':checked'))
+    }).trigger('change')
 
-    //                         })
-    //                         .fail(error => {
-    //                             swal({
-    //                                 icon: 'error',
-    //                                 message: 'Something went wrong.',
-    //                                 timer: 3000
-    //                             })
-    //                         })
-    //                 }
-    //             })
-    //         })
-    //     }, 1)
-    // })
     $(document).on('xhr.dt', '#dynamic-table', () => {
         setTimeout(() => {
             if (String(lastOpenedRows)) {
@@ -257,6 +237,7 @@ $(() => {
         let id = $this.data('id')
         $('#editServerModal .modal-content').load(route('ServerController', 'edit', { id }), () => {
             $('#editServerModal').modal('show')
+            $('#editServerModal').find('[name="use_password"]').trigger('change')
         })
     })
 

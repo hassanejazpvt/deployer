@@ -8,7 +8,7 @@ $(document).ajaxStop(() => {
     }, 1)
 })
 
-window.initFormValidator = (selector) => {
+window.initFormValidator = (selector, rules) => {
     $(selector).each((index, item) => {
         $(item).validate({
             invalidHandler: function () {
@@ -16,7 +16,8 @@ window.initFormValidator = (selector) => {
             },
             errorPlacement: function (error, element) {
                 error.addClass('invalid-feedback').insertAfter(element);
-            }
+            },
+            rules
         })
     })
 }

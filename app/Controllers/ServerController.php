@@ -4,10 +4,9 @@ namespace Contrive\Deployer\Controllers;
 
 use Carbon\Carbon;
 use Contrive\Deployer\Libs\Request;
+use Contrive\Deployer\Libs\SSHClient;
 use Contrive\Deployer\Models\Command;
 use Contrive\Deployer\Models\Server;
-use phpseclib3\Crypt\PublicKeyLoader;
-use phpseclib3\Net\SSH2;
 
 class ServerController extends Controller
 {
@@ -64,7 +63,7 @@ class ServerController extends Controller
      */
     public function update(Request $request) : void
     {
-        $this->server->update($request->all(), $request->id);
+        $this->server->update($this->prepareServerData($request->all()), $request->id);
 
         $this->JsonResponse([
             'status' => 1,
@@ -79,12 +78,27 @@ class ServerController extends Controller
      */
     public function store(Request $request) : void
     {
-        $this->server->insert($request->all());
+        $this->server->insert($this->prepareServerData($request->all()));
 
         $this->JsonResponse([
             'status' => 1,
             'message' => 'Server created successfully.'
         ]);
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
+    private function prepareServerData(array $data) : array
+    {
+        if ($data['use_password']) {
+            $data['public_key'] = $data['private_key'] = null;
+        } else {
+            $data['password'] = null;
+        }
+        return $data;
     }
 
     /**
@@ -112,6 +126,11 @@ class ServerController extends Controller
         exit();
     }
 
+    /**
+     * @param Request $request
+     *
+     * @return void
+     */
     public function import(Request $request) : void
     {
         $file = $request->file('file');
@@ -159,16 +178,12 @@ class ServerController extends Controller
      *
      * @return void
      */
-    public function verify(Request $request) : void
+    public function verify(Request $request)
     {
         $server = $this->server->find($request->id);
-        $tmpname = tempnam('tmp', '');
-        @file_put_contents($tmpname, $server['private_key']);
         try {
-            $key = PublicKeyLoader::load(file_get_contents($tmpname));
-            @unlink($tmpname);
-            $sshClient = new SSH2($server['hostname'], $server['port']);
-            if (! $sshClient->login($server['username'], $key)) {
+            $sshClient = SSHClient::connect($server);
+            if ($sshClient->getErrors()) {
                 $errors = array_map(function ($error) {
                     return '- '.$error;
                 }, $sshClient->getErrors());
@@ -178,7 +193,6 @@ class ServerController extends Controller
                 ]);
             }
         } catch (\Exception $e) {
-            @unlink($tmpname);
             $this->JsonResponse([
                 'status' => 0,
                 'message' => $e->getMessage()

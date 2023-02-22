@@ -19,17 +19,27 @@
             <label for="">Username</label>
             <input type="text" name="username" value="<?= @__($server, 'username') ?>" class="form-control" required>
         </div>
+        <div class="mb-3 password-wrapper" style="display: none;">
+            <label for="">Password</label>
+            <input type="text" name="password" value="<?= @__($server, 'password') ?>" class="form-control">
+        </div>
         <div class="mb-3">
             <label for="">Port</label>
             <input type="number" name="port" value="<?= @__($server, 'port') ?>" class="form-control" required>
         </div>
-        <div class="mb-3">
+        <div class="mb-3 keys-wrapper">
             <label for="">Public Key</label>
-            <textarea name="public_key" class="form-control" rows="5" required><?= @__($server, 'public_key') ?></textarea>
+            <textarea name="public_key" required class="form-control" rows="5"><?= @__($server, 'public_key') ?></textarea>
         </div>
-        <div class="mb-3">
+        <div class="mb-3 keys-wrapper">
             <label for="">Private Key</label>
-            <textarea name="private_key" class="form-control" rows="5" required><?= @__($server, 'private_key') ?></textarea>
+            <textarea name="private_key" required class="form-control" rows="5"><?= @__($server, 'private_key') ?></textarea>
+        </div>
+        <div class="form-check">
+            <label class="form-check-label">
+                <input type="hidden" value="0" name="use_password">
+                <input class="form-check-input" type="checkbox" value="1" <?= @__($server, 'use_password') ? 'checked' : '' ?> name="use_password"> Use Password
+            </label>
         </div>
         <div class="form-check">
             <label class="form-check-label">
