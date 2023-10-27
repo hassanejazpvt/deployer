@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="<?= APP_URL ?>/public/css/bundle.min.css?v=<?= filemtime(BASE_PATH.'/public/css/bundle.min.css') ?>" />
-    <script src="<?= APP_URL ?>/public/js/bundle.min.js?v=<?= filemtime(BASE_PATH.'/public/js/bundle.min.js') ?>"></script>
+    <link rel="stylesheet" type="text/css" href="/public/css/bundle.min.css?v=<?= filemtime(BASE_PATH.'/public/css/bundle.min.css') ?>" />
+    <script src="/public/js/bundle.min.js?v=<?= filemtime(BASE_PATH.'/public/js/bundle.min.js') ?>"></script>
     <title>Deployer</title>
 </head>
 

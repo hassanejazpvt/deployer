@@ -1,0 +1,65 @@
+version: "3.8"
+
+networks:
+  deployer-network:
+    driver: bridge
+    name: deployer-network
+
+volumes:
+  vendor:
+  node_modules:
+
+services:
+  app:
+    image: deployer-app:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: deployer-app
+    command: "php -S 0.0.0.0:80"
+    working_dir: /var/www/html
+    restart: always
+    depends_on:
+      - db
+    networks:
+      - deployer-network
+    ports:
+      - ${APP_PORT:-8200}:80
+    volumes:
+      - ./:/var/www/html
+      - /var/www/html/vendor
+      - /var/www/html/node_modules
+    environment:
+      - DB_HOST=deployer-db
+      - DB_NAME=deployer
+      - DB_USER=deployer
+      - DB_PASS=deployer@user
+
+  db:
+    image: deployer-db:latest
+    build: .docker/db
+    restart: always
+    container_name: deployer-db
+    networks:
+      - deployer-network
+    volumes:
+      - .docker/db/data:/var/lib/mysql
+      - ./deployer.sql:/docker-entrypoint-initdb.d/deployer.sql
+    environment:
+      - MARIADB_DATABASE=deployer
+      - MARIADB_USER=deployer
+      - MARIADB_PASSWORD=deployer@user
+      - MARIADB_ROOT_PASSWORD=deployer@root
+
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    networks:
+      - deployer-network
+    container_name: deployer-phpmyadmin
+    depends_on:
+      - db
+    ports:
+      - ${PMA_PORT:-8300}:80
+    environment:
+      - PMA_HOST=deployer-db
